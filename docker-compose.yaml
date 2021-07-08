@@ -1,0 +1,20 @@
+version: '2'
+services:
+  contentful:
+    image: cldreg01.mycliplister.com/external/contentful:latest
+    container_name: contentful
+    networks:
+      - traefik_default
+    labels:
+      - traefik.http.routers.contentful.rule=Host(`cldnode01.mycliplister.com`) && PathPrefix(`/contentful`)
+      - traefik.http.services.contentful.loadbalancer.server.port=80
+      - traefik.enable=true
+      - traefik.http.routers.contentful.entrypoints=websecure
+      - traefik.http.routers.contentful.tls=true
+      - traefik.http.middlewares.contentful-strip.stripprefix.prefixes=/contentful
+      - traefik.http.routers.contentful.middlewares=contentful-strip
+      
+networks:
+  traefik_default:
+    external: 
+      name: traefik_default
